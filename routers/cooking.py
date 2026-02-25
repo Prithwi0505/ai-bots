@@ -1,13 +1,10 @@
 """
-Cooking Bot Router — preserves min-word check + structured recipe output.
+Cooking Bot — answer logic only (no direct endpoint).
+
+Called internally by the auto-router in classifier.py.
 """
 
-from fastapi import APIRouter
-
 from gemini_helpers import gemini_text
-from schemas import ChatRequest, ChatResponse
-
-router = APIRouter(prefix="/cooking", tags=["Cooking Bot"])
 
 # ── Rules (identical to original) ────────────────────────────────
 COOKING_RULES = """\
@@ -43,9 +40,3 @@ def cooking_answer(user_query: str) -> str:
         return FALLBACK_MSG
     out = gemini_text(_build_prompt(user_query))
     return out if out else FALLBACK_MSG
-
-
-@router.post("", response_model=ChatResponse)
-async def cooking_endpoint(req: ChatRequest):
-    reply = cooking_answer(req.query)
-    return ChatResponse(bot="cooking", reply=reply)

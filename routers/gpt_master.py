@@ -1,13 +1,10 @@
 """
-GPT Master Bot Router — preserves step-by-step mentoring logic.
+GPT Master Bot — answer logic only (no direct endpoint).
+
+Called internally by the auto-router in classifier.py.
 """
 
-from fastapi import APIRouter
-
 from gemini_helpers import gemini_text
-from schemas import ChatRequest, ChatResponse
-
-router = APIRouter(prefix="/gpt_master", tags=["GPT Master Bot"])
 
 # ── Rules (identical to original) ────────────────────────────────
 GPT_MASTER_RULES = """\
@@ -41,9 +38,3 @@ def _build_prompt(user_query: str) -> str:
 def gpt_master_answer(user_query: str) -> str:
     out = gemini_text(_build_prompt(user_query))
     return out if out else FALLBACK_MSG
-
-
-@router.post("", response_model=ChatResponse)
-async def gpt_master_endpoint(req: ChatRequest):
-    reply = gpt_master_answer(req.query)
-    return ChatResponse(bot="gpt_master", reply=reply)

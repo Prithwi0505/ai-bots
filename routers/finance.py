@@ -1,13 +1,10 @@
 """
-Finance Bot Router — preserves disclaimer enforcement logic.
+Finance Bot — answer logic only (no direct endpoint).
+
+Called internally by the auto-router in classifier.py.
 """
 
-from fastapi import APIRouter
-
 from gemini_helpers import gemini_text
-from schemas import ChatRequest, ChatResponse
-
-router = APIRouter(prefix="/finance", tags=["Finance Bot"])
 
 # ── Rules (identical to original) ────────────────────────────────
 FINANCE_RULES = """\
@@ -46,9 +43,3 @@ def finance_answer(user_query: str) -> str:
             out += DISCLAIMER
         return out
     return FALLBACK_MSG
-
-
-@router.post("", response_model=ChatResponse)
-async def finance_endpoint(req: ChatRequest):
-    reply = finance_answer(req.query)
-    return ChatResponse(bot="finance", reply=reply)

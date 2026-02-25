@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bot Tester</title>
+    <title>AI Assistant</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,440 +14,97 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: #1a1a2e;
+            background: #111;
             color: #eee;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #e94560;
+            display: flex;
+            justify-content: center;
+            padding: 40px 16px;
         }
 
         .container {
-            max-width: 900px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
         }
 
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 15px;
+        h2 {
+            margin-bottom: 16px;
         }
 
-        .tab-btn {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            background: #16213e;
-            color: #aaa;
-            transition: 0.2s;
-        }
-
-        .tab-btn:hover {
-            background: #0f3460;
-            color: #fff;
-        }
-
-        .tab-btn.active {
-            background: #e94560;
-            color: #fff;
-        }
-
-        .panel {
-            display: none;
-            background: #16213e;
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .panel.active {
-            display: block;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 4px;
-            font-size: 13px;
-            color: #aaa;
-        }
-
-        input,
-        select,
         textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #333;
             border-radius: 6px;
-            background: #0f3460;
+            background: #222;
             color: #eee;
             font-size: 14px;
-        }
-
-        textarea {
             resize: vertical;
-            min-height: 60px;
+            min-height: 50px;
         }
 
-        .btn {
-            margin-top: 15px;
-            padding: 12px 24px;
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
             border: none;
             border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-            background: #e94560;
+            background: #4f46e5;
             color: #fff;
-            width: 100%;
-            transition: 0.2s;
+            font-size: 14px;
+            cursor: pointer;
         }
 
-        .btn:hover {
-            background: #c73651;
-        }
-
-        .btn:disabled {
+        button:disabled {
             background: #555;
             cursor: not-allowed;
         }
 
-        .response-box {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            background: #0a0a1a;
+        .result {
+            margin-top: 16px;
+            padding: 14px;
+            background: #1a1a2e;
             border: 1px solid #333;
-            min-height: 80px;
+            border-radius: 6px;
+            min-height: 60px;
             white-space: pre-wrap;
-            font-size: 14px;
-            line-height: 1.5;
             word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
-        .meta {
-            color: #e94560;
+        .bot-label {
+            color: #818cf8;
             font-weight: bold;
             margin-bottom: 8px;
-        }
-
-        .time {
-            color: #666;
-            font-size: 12px;
-            margin-top: 8px;
-        }
-
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .row>div {
-            flex: 1;
-        }
-
-        .checkbox-row {
-            display: flex;
-            gap: 20px;
-            margin-top: 10px;
-        }
-
-        .checkbox-row label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin: 0;
-        }
-
-        .checkbox-row input[type="checkbox"] {
-            width: auto;
         }
     </style>
 </head>
 
 <body>
-
     <div class="container">
-        <h1>🧩 Bot Tester</h1>
-
-        <div class="tabs" id="tab-bar">
-            <button class="tab-btn active" data-tab="auto">🔀 Auto-Route</button>
-            <button class="tab-btn" data-tab="banking">🏦 Banking</button>
-            <button class="tab-btn" data-tab="cooking">🍳 Cooking</button>
-            <button class="tab-btn" data-tab="finance">💰 Finance</button>
-            <button class="tab-btn" data-tab="gpt">🧠 GPT Master</button>
-            <button class="tab-btn" data-tab="genz">🎥 GenZ Simple</button>
-            <button class="tab-btn" data-tab="genz_detail">🎥 GenZ Detailed</button>
-            <button class="tab-btn" data-tab="classify">🏷️ Classify</button>
-        </div>
-
-        <!-- AUTO-ROUTE -->
-        <div id="panel-auto" class="panel active">
-            <h3>🔀 Auto-Routed Chat</h3>
-            <p style="color:#888;font-size:13px;">Automatically routes your query to the right bot.</p>
-            <label>Query</label>
-            <input id="auto-q" placeholder="e.g., How to make pancakes without eggs" />
-            <button class="btn" id="auto-btn">Send</button>
-            <div id="auto-res" class="response-box">Response will appear here...</div>
-        </div>
-
-        <!-- BANKING -->
-        <div id="panel-banking" class="panel">
-            <h3>🏦 Banking Bot</h3>
-            <p style="color:#888;font-size:13px;">Ask banking FAQs. Try "Show my balance" to test auth trigger.</p>
-            <label>Query</label>
-            <input id="bank-q" placeholder="e.g., What documents are needed for KYC?" />
-            <button class="btn" id="bank-btn">Send</button>
-            <div id="bank-res" class="response-box">Response will appear here...</div>
-        </div>
-
-        <!-- COOKING -->
-        <div id="panel-cooking" class="panel">
-            <h3>🍳 Cooking Bot</h3>
-            <p style="color:#888;font-size:13px;">Ask for recipes. Try a single word like "eggs" to test fallback.</p>
-            <label>Query</label>
-            <input id="cook-q" placeholder="e.g., chicken biryani recipe" />
-            <button class="btn" id="cook-btn">Send</button>
-            <div id="cook-res" class="response-box">Response will appear here...</div>
-        </div>
-
-        <!-- FINANCE -->
-        <div id="panel-finance" class="panel">
-            <h3>💰 Finance Bot</h3>
-            <p style="color:#888;font-size:13px;">Ask finance concepts. Check that disclaimer is always present.</p>
-            <label>Query</label>
-            <input id="fin-q" placeholder="e.g., What is compound interest?" />
-            <button class="btn" id="fin-btn">Send</button>
-            <div id="fin-res" class="response-box">Response will appear here...</div>
-        </div>
-
-        <!-- GPT MASTER -->
-        <div id="panel-gpt" class="panel">
-            <h3>🧠 GPT Master Bot</h3>
-            <p style="color:#888;font-size:13px;">AI mentor — gives step-by-step guidance.</p>
-            <label>Query</label>
-            <input id="gpt-q" placeholder="e.g., Help me plan my AI learning path" />
-            <button class="btn" id="gpt-btn">Send</button>
-            <div id="gpt-res" class="response-box">Response will appear here...</div>
-        </div>
-
-        <!-- GENZ SIMPLE -->
-        <div id="panel-genz" class="panel">
-            <h3>🎥 GenZ Bot (Simple)</h3>
-            <p style="color:#888;font-size:13px;">Quick GenZ content — auto-classifies internally.</p>
-            <label>Query</label>
-            <input id="genz-q" placeholder="e.g., Create an Instagram reel script for fitness" />
-            <button class="btn" id="genz-btn">Send</button>
-            <div id="genz-res" class="response-box">Response will appear here...</div>
-        </div>
-
-        <!-- GENZ DETAILED -->
-        <div id="panel-genz_detail" class="panel">
-            <h3>🎥 GenZ Bot (Detailed)</h3>
-            <p style="color:#888;font-size:13px;">Full control over script generation.</p>
-            <label>Query</label>
-            <input id="genzd-q" placeholder="e.g., Indian street food vlog" />
-            <div class="row">
-                <div>
-                    <label>Platform</label>
-                    <select id="genzd-platform">
-                        <option value="instagram_reel">Instagram Reel</option>
-                        <option value="tiktok">TikTok</option>
-                        <option value="youtube_short">YouTube Short</option>
-                        <option value="linkedin_post">LinkedIn Post</option>
-                        <option value="x_thread">X/Twitter Thread</option>
-                        <option value="whatsapp_status">WhatsApp Status</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Content Type</label>
-                    <select id="genzd-type">
-                        <option value="script_voiceover">Script/Voiceover</option>
-                        <option value="dialogue">Dialogue</option>
-                        <option value="listicle">Listicle</option>
-                        <option value="tutorial">Tutorial</option>
-                        <option value="comedy_sketch">Comedy Sketch</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Duration (sec)</label>
-                    <input id="genzd-dur" type="number" value="30" min="5" max="120" />
-                </div>
-            </div>
-            <div class="row">
-                <div>
-                    <label>Area/Focus</label>
-                    <input id="genzd-area" placeholder="e.g., pani puri" />
-                </div>
-                <div>
-                    <label>Location</label>
-                    <input id="genzd-loc" placeholder="e.g., Mumbai" />
-                </div>
-                <div>
-                    <label>Language</label>
-                    <input id="genzd-lang" value="auto" placeholder="auto, en, hi..." />
-                </div>
-            </div>
-            <div class="checkbox-row">
-                <label><input type="checkbox" id="genzd-trend" checked /> Trending</label>
-                <label><input type="checkbox" id="genzd-cam" checked /> Camera Cues</label>
-                <label><input type="checkbox" id="genzd-comp" checked /> Compare Reels</label>
-            </div>
-            <button class="btn" id="genzd-btn">Generate</button>
-            <div id="genzd-res" class="response-box">Response will appear here...</div>
-        </div>
-
-        <!-- CLASSIFIER -->
-        <div id="panel-classify" class="panel">
-            <h3>🏷️ Classifier</h3>
-            <p style="color:#888;font-size:13px;">See which bot a query would be routed to.</p>
-            <label>Query</label>
-            <input id="cls-q" placeholder="e.g., How to make pasta" />
-            <div class="checkbox-row">
-                <label><input type="checkbox" id="cls-llm" /> Use LLM (slower, higher confidence)</label>
-            </div>
-            <button class="btn" id="cls-btn">Classify</button>
-            <div id="cls-res" class="response-box">Response will appear here...</div>
-        </div>
+        <h2>AI Assistant</h2>
+        <textarea id="q" placeholder="Ask anything..." autofocus></textarea>
+        <button id="btn" onclick="send()">Send</button>
+        <div class="result" id="res">Response will appear here...</div>
     </div>
-
     <script>
-        // ─── Tab switching ──────────────────────────────────────────────
-        document.getElementById('tab-bar').addEventListener('click', function (e) {
-            var btn = e.target.closest('.tab-btn');
-            if (!btn) return;
-            var tab = btn.getAttribute('data-tab');
-            document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
-            document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
-            document.getElementById('panel-' + tab).classList.add('active');
-            btn.classList.add('active');
-        });
-
-        // ─── Helpers ────────────────────────────────────────────────────
-        function showLoading(resId) {
-            document.getElementById(resId).innerHTML = '⏳ Waiting for response... (Gemini may take 5-15 seconds)';
-        }
-
-        function showResult(resId, data, elapsed) {
-            var box = document.getElementById(resId);
-            var meta = '';
-            if (data.bot) meta += 'Bot: ' + data.bot;
-            if (data.routed_to) meta += ' | Routed to: ' + data.routed_to;
-            if (data.category) meta += 'Category: ' + data.category;
-            if (data.confidence) meta += ' | Confidence: ' + data.confidence;
-            if (data.language_detected) meta += ' | Language: ' + data.language_detected;
-
-            var reply = data.reply || data.detail || JSON.stringify(data, null, 2);
-            box.innerHTML = '<div class="meta">' + meta + '</div>' +
-                reply +
-                '<div class="time">⏱ ' + elapsed + 'ms</div>';
-        }
-
-        function showError(resId, status, text) {
-            var box = document.getElementById(resId);
-            box.innerHTML = '❌ HTTP ' + status + '\n\n' + text;
-        }
-
-        async function apiCall(endpoint, body, resId) {
-            showLoading(resId);
-            var t0 = Date.now();
-            try {
-                var response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-
-                var text = await response.text();
-                var elapsed = Date.now() - t0;
-
-                if (!response.ok) {
-                    showError(resId, response.status, text);
-                    return;
-                }
-
-                try {
-                    var data = JSON.parse(text);
-                    showResult(resId, data, elapsed);
-                } catch (e) {
-                    showError(resId, response.status, 'Invalid JSON:\n' + text.substring(0, 500));
-                }
-            } catch (e) {
-                document.getElementById(resId).innerHTML = '❌ Network error: ' + e.message +
-                    '\n\nMake sure the server is running: uvicorn main:app --reload --port 8000';
-            }
-        }
-
-        // ─── Button handlers ────────────────────────────────────────────
-        document.getElementById('auto-btn').addEventListener('click', function () {
-            var q = document.getElementById('auto-q').value.trim();
-            if (q) apiCall('/chat', { query: q }, 'auto-res');
-        });
-
-        document.getElementById('bank-btn').addEventListener('click', function () {
-            var q = document.getElementById('bank-q').value.trim();
-            if (q) apiCall('/banking', { query: q }, 'bank-res');
-        });
-
-        document.getElementById('cook-btn').addEventListener('click', function () {
-            var q = document.getElementById('cook-q').value.trim();
-            if (q) apiCall('/cooking', { query: q }, 'cook-res');
-        });
-
-        document.getElementById('fin-btn').addEventListener('click', function () {
-            var q = document.getElementById('fin-q').value.trim();
-            if (q) apiCall('/finance', { query: q }, 'fin-res');
-        });
-
-        document.getElementById('gpt-btn').addEventListener('click', function () {
-            var q = document.getElementById('gpt-q').value.trim();
-            if (q) apiCall('/gpt_master', { query: q }, 'gpt-res');
-        });
-
-        document.getElementById('genz-btn').addEventListener('click', function () {
-            var q = document.getElementById('genz-q').value.trim();
-            if (q) apiCall('/genz', { query: q }, 'genz-res');
-        });
-
-        document.getElementById('genzd-btn').addEventListener('click', function () {
-            var q = document.getElementById('genzd-q').value.trim();
+        document.getElementById('q').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+        async function send() {
+            const q = document.getElementById('q').value.trim();
             if (!q) return;
-            apiCall('/genz/detailed', {
-                query: q,
-                platform: document.getElementById('genzd-platform').value,
-                duration: parseInt(document.getElementById('genzd-dur').value) || 30,
-                content_type: document.getElementById('genzd-type').value,
-                area_spec: document.getElementById('genzd-area').value,
-                location: document.getElementById('genzd-loc').value,
-                language: document.getElementById('genzd-lang').value || 'auto',
-                include_trending: document.getElementById('genzd-trend').checked,
-                deliver_camera_cues: document.getElementById('genzd-cam').checked,
-                compare_with_reels: document.getElementById('genzd-comp').checked
-            }, 'genzd-res');
-        });
-
-        document.getElementById('cls-btn').addEventListener('click', function () {
-            var q = document.getElementById('cls-q').value.trim();
-            if (q) apiCall('/classify', { query: q, use_llm: document.getElementById('cls-llm').checked }, 'cls-res');
-        });
-
-        // Enter key support
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                var active = document.querySelector('.panel.active');
-                if (active) {
-                    var btn = active.querySelector('.btn');
-                    if (btn) btn.click();
-                }
+            const btn = document.getElementById('btn');
+            const res = document.getElementById('res');
+            btn.disabled = true;
+            res.innerHTML = 'Thinking...';
+            try {
+                const r = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: q }) });
+                const data = await r.json();
+                res.innerHTML = '<div class="bot-label">Bot: ' + (data.routed_to || data.bot) + '</div>' + (data.reply || JSON.stringify(data));
+            } catch (e) {
+                res.textContent = 'Error: ' + e.message;
             }
-        });
+            btn.disabled = false;
+        }
     </script>
-
 </body>
 
 </html>

@@ -1,13 +1,10 @@
 """
-Banking Bot Router — preserves all auth-trigger + Gemini logic from the original.
+Banking Bot — answer logic only (no direct endpoint).
+
+Called internally by the auto-router in classifier.py.
 """
 
-from fastapi import APIRouter
-
 from gemini_helpers import gemini_text
-from schemas import ChatRequest, ChatResponse
-
-router = APIRouter(prefix="/banking", tags=["Banking Bot"])
 
 # ── Rules (identical to original) ────────────────────────────────
 BANKING_RULES = """\
@@ -43,9 +40,3 @@ def banking_answer(user_query: str) -> str:
         return "Authentication required."
     out = gemini_text(_build_prompt(user_query))
     return out or "I don't have that information."
-
-
-@router.post("", response_model=ChatResponse)
-async def banking_endpoint(req: ChatRequest):
-    reply = banking_answer(req.query)
-    return ChatResponse(bot="banking", reply=reply)

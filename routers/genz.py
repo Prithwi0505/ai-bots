@@ -1,5 +1,5 @@
 """
-GenZ Content Bot Router — the most complex bot.
+GenZ Content Bot — answer logic only (no direct endpoint).
 
 Preserves:
 - Internal sub-classifier (social_media / news / movies / quotes / general_knowledge / mixed / unrelated)
@@ -8,19 +8,17 @@ Preserves:
 - Platform-specific augmented prompt building
 - Camera cues, trending hashtags, CTA generation
 - Multiple fallback layers
+
+Called internally by the auto-router in classifier.py.
 """
 
 from typing import Dict, Any, List
 
 import requests
-from fastapi import APIRouter
 from langdetect import detect
 
 from config import NEWS_API_KEY, TMDB_API_KEY, WIKI_SUMMARY_URL, WIKI_HEADERS
 from gemini_helpers import gemini_text, gemini_json
-from schemas import ChatRequest, ChatResponse, GenZRequest, GenZResponse
-
-router = APIRouter(prefix="/genz", tags=["GenZ Content Bot"])
 
 
 # ─── Internal Sub-Classifier ────────────────────────────────────
@@ -332,31 +330,3 @@ def handle_query(user_query: str) -> str:
             Include hashtags and camera angles if fitting.
             """
         return gemini_text(prompt) or "Couldn't come up with something GenZ enough."
-
-
-# ─── Endpoints ───────────────────────────────────────────────────
-
-@router.post("", response_model=ChatResponse)
-async def genz_simple_endpoint(req: ChatRequest):
-    """Simple GenZ query — auto-classifies and routes internally."""
-    reply = handle_query(req.query)
-    return ChatResponse(bot="genz", reply=reply)
-
-
-@router.post("/detailed", response_model=GenZResponse)
-async def genz_detailed_endpoint(req: GenZRequest):
-    """Detailed GenZ script with all parameters."""
-    reply, lang = genz_bot_org(
-        user_prompt=req.query,
-        platform=req.platform,
-        duration=req.duration,
-        content_type=req.content_type,
-        area_spec=req.area_spec,
-        location=req.location,
-        language=req.language,
-        tone=req.tone,
-        include_trending=req.include_trending,
-        deliver_camera_cues=req.deliver_camera_cues,
-        compare_with_reels=req.compare_with_reels,
-    )
-    return GenZResponse(reply=reply, language_detected=lang)
